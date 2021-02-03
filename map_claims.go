@@ -10,6 +10,14 @@ import (
 // This is the default claims type if you don't supply one
 type MapClaims map[string]interface{}
 
+func (m *MapClaims) Marshal()([]byte,error) {
+	return json.Marshal(m)
+}
+
+func (m *MapClaims) Unmarshal(v []byte)error {
+	return json.Unmarshal(v,m)
+}
+
 // Compares the aud claim against cmp.
 // If required is false, this method will return true if the value matches or is unset
 func (m MapClaims) VerifyAudience(cmp string, req bool) bool {

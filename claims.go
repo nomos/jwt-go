@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"crypto/subtle"
+	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -10,6 +11,8 @@ import (
 // if the token is invalid for any supported reason
 type Claims interface {
 	Valid() error
+	Marshal() ([]byte,error)
+	Unmarshal(v []byte)error
 }
 
 // Structured version of Claims Section, as referenced at
@@ -23,6 +26,15 @@ type StandardClaims struct {
 	Issuer    string `json:"iss,omitempty"`
 	NotBefore int64  `json:"nbf,omitempty"`
 	Subject   string `json:"sub,omitempty"`
+}
+
+func (c *StandardClaims) Unmarshal(v []byte) error {
+	return json.Unmarshal(v,c)
+}
+
+
+func (c *StandardClaims) Marshal() ([]byte,error) {
+	return json.Marshal(c)
 }
 
 // Validates time based claims "exp, iat, nbf".

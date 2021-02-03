@@ -17,7 +17,7 @@ type Parser struct {
 // keyFunc will receive the parsed token and should return the key for validating.
 // If everything is kosher, err will be nil
 func (p *Parser) Parse(tokenString string, keyFunc Keyfunc) (*Token, error) {
-	return p.ParseWithClaims(tokenString, MapClaims{}, keyFunc)
+	return p.ParseWithClaims(tokenString, &MapClaims{}, keyFunc)
 }
 
 func (p *Parser) ParseWithClaims(tokenString string, claims Claims, keyFunc Keyfunc) (*Token, error) {
@@ -125,11 +125,7 @@ func (p *Parser) ParseUnverified(tokenString string, claims Claims) (token *Toke
 		dec.UseNumber()
 	}
 	// JSON Decode.  Special case for map type to avoid weird pointer behavior
-	if c, ok := token.Claims.(MapClaims); ok {
-		err = dec.Decode(&c)
-	} else {
-		err = dec.Decode(&claims)
-	}
+	err = token.Claims.Unmarshal(claimBytes)
 	// Handle decode error
 	if err != nil {
 		return token, parts, &ValidationError{Inner: err, Errors: ValidationErrorMalformed}

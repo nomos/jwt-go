@@ -31,7 +31,7 @@ type Token struct {
 
 // Create a new Token.  Takes a signing method
 func New(method SigningMethod) *Token {
-	return NewWithClaims(method, MapClaims{})
+	return NewWithClaims(method, &MapClaims{})
 }
 
 func NewWithClaims(method SigningMethod, claims Claims) *Token {
@@ -72,7 +72,7 @@ func (t *Token) SigningString() (string, error) {
 				return "", err
 			}
 		} else {
-			if jsonValue, err = json.Marshal(t.Claims); err != nil {
+			if jsonValue, err = t.Claims.Marshal(); err != nil {
 				return "", err
 			}
 		}
